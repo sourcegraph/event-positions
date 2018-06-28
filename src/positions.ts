@@ -1,87 +1,55 @@
-import isEqual from "lodash/isEqual";
+import {Characters} from './characters';
+import {PositionsProps} from './positions-listener';
 
-import { Observable, Subject, Subscription } from "rxjs";
-import { distinctUntilChanged, filter, map, tap } from "rxjs/operators";
-
-import { fromEvent } from "rxjs";
-import { Position } from "vscode-languageserver-types";
-
-import { Characters } from "./characters";
-import { propertyIsDefined } from "./utils/types";
-
-export type SupportedMouseEvents = "mousemove" | "click";
-
-const mouseEventTypes: SupportedMouseEvents[] = ["mousemove", "click"];
-
-export interface PositionEvent {
-  position: Position;
-  event: MouseEvent;
-  type: SupportedMouseEvents;
-}
-
-const fromMouseEvent = (element: HTMLElement, type: SupportedMouseEvents) =>
-  fromEvent<MouseEvent>(element, type);
-
-export interface PositionsProps {
-  /** The DOM element to be monitored. */
-  element: HTMLElement;
-
-  /**
-   * Gets the element containing
-   *
-   * @param
-   */
-  getCodeElementFromTarget: (target: HTMLElement) => HTMLElement | null;
-  getCodeElementFromLineNumber: (
-    blob: HTMLElement,
-    line: number
-  ) => HTMLElement | null;
-  getLineNumberFromCodeElement: (target: HTMLElement) => number;
-}
-
-export type PositionListener = Observable<PositionEvent>;
-
-export function createPositionListener(
-  element: HTMLElement,
-  props: PositionsProps
-): PositionListener {
-  const firstCell = props.getCodeElementFromLineNumber(element, 0);
-  if (!firstCell) {
-    throw new Error("Cannot create annotator for element with no rows");
+/**
+ *  Get the character of an that an event happened at.
+ *
+ *  @returns character is the 0-indexed position in a line or -1 if the event
+ *  happened before or after the characters in a line.
+ */
+export function getCharacter(
+  event: MouseEvent,
+  props: Pick<PositionsProps, 'getCodeElementFromTarget'>,
+): number {
+  const element = props.getCodeElementFromTarget(event.target as HTMLElement);
+  if (!element) {
+    return -1;
   }
 
-  const characters = new Characters(firstCell);
+  const characters = new Characters(element as HTMLElement);
 
-  return new Observable<PositionEvent>(observer => {
-    const addEventListener = (type: SupportedMouseEvents) =>
-      observer.add(
-        fromMouseEvent(element, type)
-          .pipe(
-            map(event => ({
-              event,
-              elem: props.getCodeElementFromTarget(event.target as HTMLElement)
-            })),
-            filter(propertyIsDefined("elem")),
-            map(({ event, elem }) => ({
-              event,
-              position: {
-                line: props.getLineNumberFromCodeElement(elem),
-                character: characters.getCharacter(elem, event)
-              }
-            })),
-            distinctUntilChanged((a, b) => isEqual(a.position, b.position))
-          )
-          .subscribe(({ event, position }) =>
-            observer.next({
-              position,
-              event,
-              type
-            })
-          )
-      );
+  return characters.getCharacter(element, event);
+}
 
-    for (const eventType of mouseEventTypes) {
-      addEventListener(eventType);
-    }
-  });
+/**
+ * The start and end position in pixels.
+ *
+ * To use this for positioning an element to span a range of characters:
+ * - Use `start` as `element.style.left`
+ * - Use `end - start` as `element.style.width`
+ */
+export interface PixelPosition {
+  /** The start position in pixels. Use this as style.left for positioning elements. */
+  start: number;
+  /** The end position in pixels. */
+  end: number;
+}
+
+/**
+ * Gets the PixelRange of two characters in an element.
+ */
+export function getCharactersPixelRange(
+  /** The element the characters are in. This is needed to determine character widths so that we can find the position. */
+  element: HTMLElement,
+  /** The start character. (0-indexed) */
+  start: number,
+  /** The end character. (0-indexed) */
+  end: number,
+): PixelPosition {
+  const characters = new Characters(element);
+
+  return {
+    start: characters.getCharacterOffset(start, element, true),
+    end: characters.getCharacterOffset(end, element, false),
+  };
 }

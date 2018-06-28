@@ -12,17 +12,9 @@ export class Characters {
 
   private widths = new Map<number, number>();
 
-  private internalTeardown: (() => void) | null = null;
-
   constructor(container: HTMLElement) {
     this.container = container;
   }
-
-  public teardown = (): void => {
-    if (this.internalTeardown) {
-      this.internalTeardown();
-    }
-  };
 
   public getCharacterRanges = (elem: HTMLElement): CoordinateRange[] => {
     const ranges: CoordinateRange[] = [];
