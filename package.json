@@ -1,6 +1,6 @@
 {
-  "name": "dom-positions",
-  "version": "0.0.1",
+  "name": "@sourcegraph/dom-positions",
+  "version": "0.0.4",
   "description": "Finds the positons of mouse events in dom elements based on LSP",
   "license": "MIT",
   "main": "index.js",

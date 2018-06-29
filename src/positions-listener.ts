@@ -6,7 +6,7 @@ import {distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
 import {fromEvent} from 'rxjs';
 import {Position} from 'vscode-languageserver-types';
 
-import {Characters} from './characters';
+import {Characters, TokenRange} from './characters';
 import {propertyIsDefined} from './utils/types';
 
 export type SupportedMouseEvents = 'mousemove' | 'click';
@@ -15,6 +15,8 @@ const mouseEventTypes: SupportedMouseEvents[] = ['mousemove', 'click'];
 
 export interface PositionEvent {
   position: Position;
+  tokenRange: TokenRange;
+  tokenPixelRange: TokenRange;
   event: MouseEvent;
   eventType: SupportedMouseEvents;
 }
@@ -25,9 +27,6 @@ const fromMouseEvent = (
 ) => fromEvent<MouseEvent>(element, eventType);
 
 export interface PositionsProps {
-  /** The DOM element to be monitored. */
-  element: HTMLElement;
-
   /**
    * Gets the element containing
    *
@@ -72,11 +71,38 @@ export function createPositionListener(
               },
             })),
             distinctUntilChanged((a, b) => isEqual(a.position, b.position)),
+            map(({event, position, ...rest}) => {
+              const tokenRange = characters.getTokenRangeFromPosition(
+                event.target as HTMLElement,
+                position,
+              );
+
+              return {
+                tokenRange,
+                tokenPixelRange: {
+                  start: characters.getCharacterOffset(
+                    tokenRange.start,
+                    event.target as HTMLElement,
+                    true,
+                  ),
+                  end: characters.getCharacterOffset(
+                    tokenRange.start,
+                    event.target as HTMLElement,
+                    true,
+                  ),
+                },
+                event,
+                position,
+                ...rest,
+              };
+            }),
           )
-          .subscribe(({event, position}) =>
+          .subscribe(({event, position, tokenRange, tokenPixelRange}) =>
             observer.next({
               position,
               event,
+              tokenRange,
+              tokenPixelRange,
               eventType,
             }),
           ),
