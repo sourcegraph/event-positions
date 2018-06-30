@@ -1,5 +1,5 @@
-import {Characters} from './characters';
-import {PositionsProps} from './positions-listener';
+import { Characters } from "./characters";
+import { PositionsProps } from "./positions_listener";
 
 /**
  *  Get the character of an that an event happened at.
@@ -9,7 +9,7 @@ import {PositionsProps} from './positions-listener';
  */
 export function getCharacter(
   event: MouseEvent,
-  props: Pick<PositionsProps, 'getCodeElementFromTarget'>,
+  props: Pick<PositionsProps, "getCodeElementFromTarget">
 ): number {
   const element = props.getCodeElementFromTarget(event.target as HTMLElement);
   if (!element) {
@@ -44,12 +44,12 @@ export function getCharactersPixelRange(
   /** The start character. (0-indexed) */
   start: number,
   /** The end character. (0-indexed) */
-  end: number,
+  end: number
 ): PixelPosition {
   const characters = new Characters(element);
 
   return {
     start: characters.getCharacterOffset(start, element, true),
-    end: characters.getCharacterOffset(end, element, false),
+    end: characters.getCharacterOffset(end, element, false)
   };
 }

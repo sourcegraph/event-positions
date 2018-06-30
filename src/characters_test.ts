@@ -1,37 +1,37 @@
-import {Characters, findWordEdge} from './characters';
-import {getTextNodes} from './dom';
-import {isWithinOne} from './testutils/assert';
+import { Characters, findWordEdge } from "./characters";
+import { getTextNodes } from "./dom";
+import { isWithinOne } from "./testutils/assert";
 import {
   BlobProps,
   DOM,
   getCharacterWidthInContainer,
-  wrapCharsInSpans,
-} from './testutils/dom';
-import {createMouseMoveEvent} from './testutils/mouse';
+  wrapCharsInSpans
+} from "./testutils/dom";
+import { createMouseMoveEvent } from "./testutils/mouse";
 
-const {expect} = chai;
+const { expect } = chai;
 
 const tabChar = String.fromCharCode(9);
 const spaceChar = String.fromCharCode(32);
 
-describe('getTextNodes', () => {
+describe("getTextNodes", () => {
   const dom = new DOM();
   after(dom.cleanup);
 
-  it('gets the correct text nodes', () => {
+  it("gets the correct text nodes", () => {
     const elems = [
       {
         // Has nodes at multiple depths
         elem:
-          '<div><span>He</span><span>llo,<span> Wo</span></span><span>rld!</span></div>',
-        nodeValues: ['He', 'llo,', ' Wo', 'rld!'],
+          "<div><span>He</span><span>llo,<span> Wo</span></span><span>rld!</span></div>",
+        nodeValues: ["He", "llo,", " Wo", "rld!"]
       },
       {
         elem: `<div><span>${tabChar}He</span><span>llo,<span> Wo</span></span><span>orld!</span></div>`,
-        nodeValues: [tabChar + 'He', 'llo,', ' Wo', 'orld!'],
-      },
+        nodeValues: [tabChar + "He", "llo,", " Wo", "orld!"]
+      }
     ];
-    for (const {elem, nodeValues} of elems) {
+    for (const { elem, nodeValues } of elems) {
       const nodes = getTextNodes(dom.createElementFromString(elem));
       expect(nodes.length).to.equal(nodeValues.length);
 
@@ -42,7 +42,7 @@ describe('getTextNodes', () => {
   });
 });
 
-describe('Characters', () => {
+describe("Characters", () => {
   const dom = new DOM();
   // after(dom.cleanup);
 
@@ -60,32 +60,32 @@ describe('Characters', () => {
     testcases = dom.createBlobs().map((blobProps, i) => {
       const firstRow = blobProps.getCodeElementFromLineNumber(
         blobProps.element,
-        0,
+        0
       )!;
 
-      const cases = [tabChar, spaceChar, 'a', 'b', 'c', 'd', '/', '#'];
+      const cases = [tabChar, spaceChar, "a", "b", "c", "d", "/", "#"];
 
       const measure = new Characters(firstRow);
-      const newRow = blobProps.insertRow('');
+      const newRow = blobProps.insertRow("");
       const measureContainer = newRow.children.item(1)! as HTMLElement;
-      measureContainer.innerHTML = wrapCharsInSpans(cases.join(''));
+      measureContainer.innerHTML = wrapCharsInSpans(cases.join(""));
 
       const chars = cases.map((character, j) => ({
         character,
-        width: getCharacterWidthInContainer(measureContainer, character, j),
+        width: getCharacterWidthInContainer(measureContainer, character, j)
       }));
 
       return {
         blobProps,
         measure,
         measureContainer,
-        chars,
+        chars
       };
     });
   });
 
-  it('can get character ranges', () => {
-    for (const {chars, measure, measureContainer} of testcases) {
+  it("can get character ranges", () => {
+    for (const { chars, measure, measureContainer } of testcases) {
       const ranges = measure.getCharacterRanges(measureContainer);
       let offset = 0;
 
@@ -98,34 +98,34 @@ describe('Characters', () => {
     }
   });
 
-  it('can get character offset', () => {
-    for (const {chars, measure, measureContainer} of testcases) {
+  it("can get character offset", () => {
+    for (const { chars, measure, measureContainer } of testcases) {
       let offset = 0;
       for (const [i, character] of chars.entries()) {
         isWithinOne(
           measure.getCharacterOffset(i, measureContainer, true),
-          offset,
+          offset
         );
         offset += character.width;
         isWithinOne(
           measure.getCharacterOffset(i, measureContainer, false),
-          offset,
+          offset
         );
       }
     }
   });
 
-  it('can get character from MouseEvent', () => {
-    for (const {measure, measureContainer} of testcases) {
-      const offsetLeft = measureContainer.querySelector(
-        '[data-char="0"]',
-      )!.getBoundingClientRect().left;
+  it("can get character from MouseEvent", () => {
+    for (const { measure, measureContainer } of testcases) {
+      const offsetLeft = measureContainer
+        .querySelector('[data-char="0"]')!
+        .getBoundingClientRect().left;
       const ranges = measure.getCharacterRanges(measureContainer);
 
       for (const [i, range] of ranges.entries()) {
         const eventStart = createMouseMoveEvent({
           x: offsetLeft + range.start + 1,
-          y: 0, // doesn't matter
+          y: 0 // doesn't matter
         });
 
         let character = measure.getCharacter(measureContainer, eventStart);
@@ -134,7 +134,7 @@ describe('Characters', () => {
 
         const eventEnd = createMouseMoveEvent({
           x: offsetLeft + range.end - 1,
-          y: 0, // doesn't matter
+          y: 0 // doesn't matter
         });
 
         character = measure.getCharacter(measureContainer, eventEnd);
@@ -144,11 +144,11 @@ describe('Characters', () => {
     }
   });
 
-  it('returns -1 for coordinates outside of the ranges for a cell', () => {
-    for (const {measure, measureContainer} of testcases) {
+  it("returns -1 for coordinates outside of the ranges for a cell", () => {
+    for (const { measure, measureContainer } of testcases) {
       const eventStart = createMouseMoveEvent({
         x: 0,
-        y: 0,
+        y: 0
       });
 
       let character = measure.getCharacter(measureContainer, eventStart);
@@ -157,7 +157,7 @@ describe('Characters', () => {
 
       const eventEnd = createMouseMoveEvent({
         x: measureContainer.getBoundingClientRect().right + 1,
-        y: 0,
+        y: 0
       });
 
       character = measure.getCharacter(measureContainer, eventEnd);
@@ -166,23 +166,23 @@ describe('Characters', () => {
     }
   });
 
-  it('can get the range of the full token', () => {
+  it("can get the range of the full token", () => {
     const tests = [
-      {position: {line: 6, character: 3}, range: {start: 0, end: 5}}, // 'import'
-      {position: {line: 6, character: 7}, range: {start: 7, end: 7}}, // '('
-      {position: {line: 15, character: 6}, range: {start: 4, end: 20}}, // ErrMethodMismatch
-      {position: {line: 17, character: 26}, range: {start: 21, end: 26}}, // errors
-      {position: {line: 24, character: 31}, range: {start: 29, end: 32}}, // make
-      {position: {line: 89, character: 51}, range: {start: 49, end: 53}}, // match
-      {position: {line: 89, character: 55}, range: {start: 55, end: 61}}, // Handler
-      {position: {line: 89, character: 0}, range: {start: 0, end: 0}}, // <Tab>
+      { position: { line: 6, character: 3 }, range: { start: 0, end: 5 } }, // 'import'
+      { position: { line: 6, character: 7 }, range: { start: 7, end: 7 } }, // '('
+      { position: { line: 15, character: 6 }, range: { start: 4, end: 20 } }, // ErrMethodMismatch
+      { position: { line: 17, character: 26 }, range: { start: 21, end: 26 } }, // errors
+      { position: { line: 24, character: 31 }, range: { start: 29, end: 32 } }, // make
+      { position: { line: 89, character: 51 }, range: { start: 49, end: 53 } }, // match
+      { position: { line: 89, character: 55 }, range: { start: 55, end: 61 } }, // Handler
+      { position: { line: 89, character: 0 }, range: { start: 0, end: 4 } } // <Tab>
     ];
 
-    for (const {measure, measureContainer, blobProps} of testcases) {
-      for (const {position, range} of tests) {
+    for (const { measure, blobProps } of testcases) {
+      for (const { position, range } of tests) {
         const lineElem = blobProps.getCodeElementFromLineNumber(
           blobProps.element,
-          position.line,
+          position.line
         );
 
         const gotRange = measure.getTokenRangeFromPosition(lineElem!, position);
@@ -205,7 +205,7 @@ const NONVARIABLE_TOKENIZER = /(^[^\x21-\x7E]+)/;
  */
 function tokenizeText(txt: string): string {
   if (txt.length === 0) {
-    return '';
+    return "";
   }
 
   // first, check for real stuff, i.e. sets of [A-Za-z0-9_]
@@ -229,16 +229,16 @@ function tokenizeText(txt: string): string {
   return txt[0];
 }
 
-describe('findWordEdge', () => {
-  it('has the same output at a regex based tokenizer', () => {
+describe("findWordEdge", () => {
+  it("has the same output at a regex based tokenizer", () => {
     const words = [
-      {text: 'hello world', at: 0},
-      {text: 'handler.ServeHTTP', at: 4},
-      {text: '       hello world', at: 2},
-      {text: '{}', at: 0},
+      { text: "hello world", at: 0 },
+      { text: "handler.ServeHTTP", at: 4 },
+      { text: "       hello world", at: 2 },
+      { text: "{}", at: 0 }
     ];
 
-    for (const {text, at} of words) {
+    for (const { text, at } of words) {
       const codes = Array.from(text).map(c => c.charCodeAt(0));
 
       const start = findWordEdge(codes, at, -1);

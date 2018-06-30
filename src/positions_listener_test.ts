@@ -1,13 +1,13 @@
-import {map} from 'rxjs/operators';
-import {TestScheduler} from 'rxjs/testing';
+import { map } from "rxjs/operators";
+import { TestScheduler } from "rxjs/testing";
 
-import {createPositionListener} from './positions-listener';
-import {BlobProps, DOM} from './testutils/dom';
-import {createClickEvent, createMouseMoveEvent} from './testutils/mouse';
+import { createPositionListener } from "./positions_listener";
+import { BlobProps, DOM } from "./testutils/dom";
+import { createClickEvent, createMouseMoveEvent } from "./testutils/mouse";
 
 const getScheduler = () => new TestScheduler(chai.assert.deepEqual);
 
-describe('PositionListener', () => {
+describe("PositionListener", () => {
   const dom = new DOM();
   after(dom.cleanup);
 
@@ -19,31 +19,31 @@ describe('PositionListener', () => {
   before(() => {
     testcases = dom.createBlobs().map(blobProps => {
       const lines = Array.from(
-        blobProps.element.querySelectorAll('tr td:nth-of-type(2)')!,
+        blobProps.element.querySelectorAll("tr td:nth-of-type(2)")!
       )
-        .map(td => td.textContent || '')
+        .map(td => td.textContent || "")
         // Only test the first 50 lines to not kill the test runner
         .slice(0, 1);
 
       return {
         blobProps,
-        lines,
+        lines
       };
     });
   });
 
-  it('emits with the correct position on hovers', () => {
-    for (const {blobProps} of testcases) {
+  it("emits with the correct position on hovers", () => {
+    for (const { blobProps } of testcases) {
       const scheduler = getScheduler();
 
-      scheduler.run(({cold, expectObservable}) => {
+      scheduler.run(({ cold, expectObservable }) => {
         const positions = createPositionListener(blobProps.element, blobProps);
 
         const positionsFromEvents = positions.pipe(
-          map(({position}) => position),
+          map(({ line, character }) => ({ line, character }))
         );
 
-        const diagram = '-abcdefg';
+        const diagram = "-abcdefg";
         const inputMap = {
           a: 0,
           b: 1,
@@ -51,25 +51,21 @@ describe('PositionListener', () => {
           d: 3,
           e: 4,
           f: 5,
-          g: 6,
+          g: 18
         };
 
         // Line 18 because it has a tab at the beginning (17 because Position is 0-indexed)
-        const line = 17;
+        const l = 17;
 
         const outputMap = {
-          a: {line, character: 0},
-          b: {line, character: 1},
-          c: {line, character: 2},
-          d: {line, character: 3},
-          e: {line, character: 4},
-          f: {line, character: 5},
-          g: {line, character: 6},
+          a: { line: l, character: 0 },
+          b: { line: l, character: 1 },
+          c: { line: l, character: 18 }
         };
 
         const cell = blobProps.getCodeElementFromLineNumber(
           blobProps.element,
-          17,
+          17
         ) as HTMLEmbedElement;
 
         cold(diagram, inputMap).subscribe(i => {
@@ -79,29 +75,29 @@ describe('PositionListener', () => {
 
           const event = createMouseMoveEvent({
             x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
+            y: rect.top + rect.height / 2
           });
 
           char.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe(diagram, outputMap);
+        expectObservable(positionsFromEvents).toBe("-ab----c", outputMap);
       });
     }
   });
 
-  it('emits with character as -1 when an event happens before or after the characters', () => {
-    for (const {blobProps} of testcases) {
+  it("emits with character as -1 when an event happens before or after the characters", () => {
+    for (const { blobProps } of testcases) {
       const scheduler = getScheduler();
 
-      scheduler.run(({cold, expectObservable, flush}) => {
+      scheduler.run(({ cold, expectObservable, flush }) => {
         const positions = createPositionListener(blobProps.element, blobProps);
 
         const positionsFromEvents = positions.pipe(
-          map(({position}) => position),
+          map(({ line, character }) => ({ line, character }))
         );
 
-        const diagram = '-abcdefg';
+        const diagram = "-abcdefg";
         const inputMap = {
           a: 6,
           b: 7,
@@ -109,10 +105,10 @@ describe('PositionListener', () => {
           d: 9,
           e: 10,
           f: 11,
-          g: 12,
+          g: 12
         };
 
-        const noChar = (line: number) => ({line, character: -1});
+        const noChar = (line: number) => ({ line, character: -1 });
 
         const outputMap = {
           a: noChar(6),
@@ -121,13 +117,13 @@ describe('PositionListener', () => {
           d: noChar(9),
           e: noChar(10),
           f: noChar(11),
-          g: noChar(12),
+          g: noChar(12)
         };
 
         cold<number>(diagram, inputMap).subscribe(i => {
           const cell = blobProps.getCodeElementFromLineNumber(
             blobProps.element,
-            i,
+            i
           ) as HTMLEmbedElement;
 
           const char = cell.querySelector('[data-char="0"]') as HTMLElement;
@@ -136,7 +132,7 @@ describe('PositionListener', () => {
 
           const event = createMouseMoveEvent({
             x: rect.left - 10,
-            y: 0, // doesn't matter
+            y: 0 // doesn't matter
           });
 
           char.dispatchEvent(event);
@@ -147,18 +143,18 @@ describe('PositionListener', () => {
     }
   });
 
-  it('emits with the correct position on clicks', () => {
-    for (const {blobProps} of testcases) {
+  it("emits with the correct position on clicks", () => {
+    for (const { blobProps } of testcases) {
       const scheduler = getScheduler();
 
-      scheduler.run(({cold, expectObservable, flush}) => {
+      scheduler.run(({ cold, expectObservable, flush }) => {
         const positions = createPositionListener(blobProps.element, blobProps);
 
         const positionsFromEvents = positions.pipe(
-          map(({position}) => position),
+          map(({ line, character }) => ({ line, character }))
         );
 
-        const diagram = '-abcdefg';
+        const diagram = "-abcdefg";
         const inputMap = {
           a: 6,
           b: 7,
@@ -166,25 +162,22 @@ describe('PositionListener', () => {
           d: 9,
           e: 10,
           f: 11,
-          g: 12,
+          g: 12
         };
 
-        const line = 24;
+        const l = 24;
 
         const outputMap = {
-          a: {line, character: 6},
-          b: {line, character: 7},
-          c: {line, character: 8},
-          d: {line, character: 9},
-          e: {line, character: 10},
-          f: {line, character: 11},
-          g: {line, character: 12},
+          a: { line: l, character: 6 },
+          b: { line: l, character: 7 },
+          c: { line: l, character: 8 },
+          d: { line: l, character: 9 }
         };
 
         cold<number>(diagram, inputMap).subscribe(i => {
           const cell = blobProps.getCodeElementFromLineNumber(
             blobProps.element,
-            line,
+            l
           ) as HTMLEmbedElement;
 
           const char = cell.querySelector(`[data-char="${i}"]`) as HTMLElement;
@@ -193,42 +186,42 @@ describe('PositionListener', () => {
 
           const event = createClickEvent({
             x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2,
+            y: rect.top + rect.height / 2
           });
 
           char.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe(diagram, outputMap);
+        expectObservable(positionsFromEvents).toBe("-abcd", outputMap);
       });
     }
   });
 
-  it('emits with the correct eventType', () => {
-    for (const {blobProps} of testcases) {
+  it("emits with the correct eventType", () => {
+    for (const { blobProps } of testcases) {
       const scheduler = getScheduler();
 
-      scheduler.run(({cold, expectObservable, flush}) => {
+      scheduler.run(({ cold, expectObservable, flush }) => {
         const positions = createPositionListener(blobProps.element, blobProps);
 
         const positionsFromEvents = positions.pipe(
-          map(({eventType}) => eventType),
+          map(({ eventType }) => eventType)
         );
 
-        const diagram = '-ab';
+        const diagram = "-ab";
         const inputMap = {
-          a: createMouseMoveEvent({x: 0, y: 0}),
-          b: createClickEvent({x: 0, y: 0}),
+          a: createMouseMoveEvent({ x: 0, y: 0 }),
+          b: createClickEvent({ x: 0, y: 0 })
         };
 
         const outputMap = {
-          a: 'mousemove',
-          b: 'click',
+          a: "mousemove",
+          b: "click"
         };
 
         const elem = blobProps.getCodeElementFromLineNumber(
           blobProps.element,
-          0,
+          0
         ) as HTMLElement;
 
         cold<MouseEvent>(diagram, inputMap).subscribe(event => {

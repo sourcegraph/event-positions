@@ -3,5 +3,5 @@ export {
   createPositionListener,
   PositionsProps,
   PositionEvent
-} from "./positions-listener";
+} from "./positions_listener";
 export { Characters as CharacterPositions, FULL_LINE } from "./characters";

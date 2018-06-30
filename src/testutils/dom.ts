@@ -2,7 +2,7 @@ import githubCode from "../../testcases/generated/github.html";
 import sourcegraphCode from "../../testcases/generated/sourcegraph.html";
 
 import { getTextNodes } from "../dom";
-import { PositionsProps } from "../positions-listener";
+import { PositionsProps } from "../positions_listener";
 
 const createElementFromString = (html: string): HTMLElement => {
   const elem = document.createElement("div");
