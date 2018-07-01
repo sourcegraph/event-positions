@@ -1,13 +1,14 @@
-import { map } from "rxjs/operators";
+import { of } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
 
-import { createPositionListener } from "./positions_listener";
+import { findPositionsFromEvents } from "./positions_events";
 import { BlobProps, DOM } from "./testutils/dom";
 import { createClickEvent, createMouseMoveEvent } from "./testutils/mouse";
 
 const getScheduler = () => new TestScheduler(chai.assert.deepEqual);
 
-describe("PositionListener", () => {
+describe("findPositionEvents", () => {
   const dom = new DOM();
   after(dom.cleanup);
 
@@ -32,14 +33,31 @@ describe("PositionListener", () => {
     });
   });
 
+  it("handles empty elements", () => {
+    const { blobProps } = testcases[0];
+
+    const scheduler = getScheduler();
+    scheduler.run(({ cold, expectObservable }) => {
+      const errors = cold<HTMLElement>("a", {
+        a: dom.createElementFromString("")
+      }).pipe(
+        findPositionsFromEvents(blobProps),
+        catchError(() => of("err"))
+      );
+
+      expectObservable(errors).toBe("(a|)", {
+        a: "err"
+      });
+    });
+  });
+
   it("emits with the correct position on hovers", () => {
     for (const { blobProps } of testcases) {
       const scheduler = getScheduler();
 
       scheduler.run(({ cold, expectObservable }) => {
-        const positions = createPositionListener(blobProps.element, blobProps);
-
-        const positionsFromEvents = positions.pipe(
+        const positionEvents = of(blobProps.element).pipe(
+          findPositionsFromEvents(blobProps),
           map(({ line, character }) => ({ line, character }))
         );
 
@@ -81,7 +99,7 @@ describe("PositionListener", () => {
           char.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe("-ab----c", outputMap);
+        expectObservable(positionEvents).toBe("-ab----c", outputMap);
       });
     }
   });
@@ -91,9 +109,8 @@ describe("PositionListener", () => {
       const scheduler = getScheduler();
 
       scheduler.run(({ cold, expectObservable, flush }) => {
-        const positions = createPositionListener(blobProps.element, blobProps);
-
-        const positionsFromEvents = positions.pipe(
+        const positionEvents = of(blobProps.element).pipe(
+          findPositionsFromEvents(blobProps),
           map(({ line, character }) => ({ line, character }))
         );
 
@@ -138,7 +155,7 @@ describe("PositionListener", () => {
           char.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe(diagram, outputMap);
+        expectObservable(positionEvents).toBe(diagram, outputMap);
       });
     }
   });
@@ -148,9 +165,8 @@ describe("PositionListener", () => {
       const scheduler = getScheduler();
 
       scheduler.run(({ cold, expectObservable, flush }) => {
-        const positions = createPositionListener(blobProps.element, blobProps);
-
-        const positionsFromEvents = positions.pipe(
+        const positionEvents = of(blobProps.element).pipe(
+          findPositionsFromEvents(blobProps),
           map(({ line, character }) => ({ line, character }))
         );
 
@@ -192,7 +208,7 @@ describe("PositionListener", () => {
           char.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe("-abcd", outputMap);
+        expectObservable(positionEvents).toBe("-abcd", outputMap);
       });
     }
   });
@@ -202,9 +218,8 @@ describe("PositionListener", () => {
       const scheduler = getScheduler();
 
       scheduler.run(({ cold, expectObservable, flush }) => {
-        const positions = createPositionListener(blobProps.element, blobProps);
-
-        const positionsFromEvents = positions.pipe(
+        const positionEvents = of(blobProps.element).pipe(
+          findPositionsFromEvents(blobProps),
           map(({ eventType }) => eventType)
         );
 
@@ -228,7 +243,7 @@ describe("PositionListener", () => {
           elem.dispatchEvent(event);
         });
 
-        expectObservable(positionsFromEvents).toBe(diagram, outputMap);
+        expectObservable(positionEvents).toBe(diagram, outputMap);
       });
     }
   });

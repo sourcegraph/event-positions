@@ -44,7 +44,7 @@ describe("getTextNodes", () => {
 
 describe("Characters", () => {
   const dom = new DOM();
-  // after(dom.cleanup);
+  after(dom.cleanup);
 
   let testcases: Array<{
     blobProps: BlobProps;

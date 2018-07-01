@@ -1,8 +1,7 @@
 import githubCode from "../../testcases/generated/github.html";
 import sourcegraphCode from "../../testcases/generated/sourcegraph.html";
 
-import { getTextNodes } from "../dom";
-import { PositionsProps } from "../positions_listener";
+import { PositionsProps } from "../positions_events";
 
 const createElementFromString = (html: string): HTMLElement => {
   const elem = document.createElement("div");
@@ -17,9 +16,6 @@ const createElementFromString = (html: string): HTMLElement => {
 
   return elem;
 };
-
-export const getCharacterWidth = (character: string): number =>
-  createElementFromString(character).getBoundingClientRect().width;
 
 export const getCharacterWidthInContainer = (
   container: HTMLElement,
@@ -40,20 +36,6 @@ export const getCharacterWidthInContainer = (
 
   return width;
 };
-
-const getCharactersInCell = (cell: HTMLElement) =>
-  Array.from(
-    getTextNodes(cell)
-      .map(node => node.nodeValue)
-      .join("")
-  );
-
-export const getNumberOfCharactersFromCell = (cell: HTMLElement): number =>
-  getCharactersInCell(cell).length;
-export const getWidthOfCharactersFromCell = (cell: HTMLElement): number =>
-  getCharactersInCell(cell)
-    .map((c, i) => getCharacterWidthInContainer(cell, c, i))
-    .reduce((a, b) => a + b, 0);
 
 export type BlobProps = Pick<
   PositionsProps,
@@ -83,11 +65,6 @@ const createGitHubBlob = (): BlobProps => {
 
     const codeCell = row.children.item(1) as HTMLElement;
 
-    if (!codeCell.classList.contains("blob-code")) {
-      // Line element mouse overs probably
-      return null;
-    }
-
     return codeCell;
   };
 
@@ -100,12 +77,9 @@ const createGitHubBlob = (): BlobProps => {
       return null;
     }
 
-    const row = numCell.closest("tr") as HTMLElement;
-    if (!row) {
-      return row;
-    }
+    const row = numCell.closest("tr");
 
-    return row.children.item(1) as HTMLElement | null;
+    return row!.children.item(1) as HTMLElement | null;
   };
 
   const getLineNumberFromCodeElement = (codeCell: HTMLElement): number => {
@@ -114,9 +88,6 @@ const createGitHubBlob = (): BlobProps => {
       return -1;
     }
     const numCell = row.children.item(0) as HTMLElement;
-    if (!numCell || (numCell && !numCell.dataset.lineNumber)) {
-      return -1;
-    }
 
     return parseInt(numCell.dataset.lineNumber as string, 10) - 1;
   };
@@ -168,11 +139,6 @@ const createSourcegraphBlob = (): BlobProps => {
 
     const codeCell = row.children.item(1) as HTMLElement;
 
-    if (!codeCell.classList.contains("code")) {
-      // Line element mouse overs probably
-      return null;
-    }
-
     return codeCell;
   };
 
@@ -185,12 +151,9 @@ const createSourcegraphBlob = (): BlobProps => {
       return null;
     }
 
-    const row = numCell.closest("tr") as HTMLElement;
-    if (!row) {
-      return row;
-    }
+    const row = numCell.closest("tr");
 
-    return row.children.item(1) as HTMLElement | null;
+    return row!.children.item(1) as HTMLElement | null;
   };
 
   const getLineNumberFromCodeElement = (codeCell: HTMLElement): number => {
@@ -200,9 +163,6 @@ const createSourcegraphBlob = (): BlobProps => {
     }
 
     const numCell = row.children.item(0) as HTMLElement;
-    if (!numCell || (numCell && !numCell.dataset.line)) {
-      return -1;
-    }
 
     // data-line - 1 because 0-based in LSP
     // https://sourcegraph.com/github.com/Microsoft/vscode-languageserver-node/-/blob/types/src/main.ts#L20:5

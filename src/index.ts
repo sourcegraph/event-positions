@@ -1,7 +1,2 @@
-export { getCharacter, getCharactersPixelRange } from "./positions";
-export {
-  createPositionListener,
-  PositionsProps,
-  PositionEvent
-} from "./positions_listener";
+export { PositionsProps, PositionEvent } from "./positions_events";
 export { Characters as CharacterPositions, FULL_LINE } from "./characters";

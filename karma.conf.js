@@ -36,11 +36,14 @@ module.exports = config => {
     webpackMiddleware: {
       stats: "errors-only",
       bail: true
-      //   stats: {
-      //     colors: true
-      //   }
     },
 
-    browsers: ["Chrome", "Firefox"]
+    browsers: ["Chrome", "Firefox"],
+
+    reporters: ["progress", "coverage-istanbul"],
+    coverageIstanbulReporter: {
+      reports: ["json", "html"],
+      fixWebpackSourcePaths: true
+    }
   });
 };
