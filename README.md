@@ -1,28 +1,26 @@
-# DOM Positions
+# Event Positions
+
+This is a small library used to determining the the positions that events happened at
+in code views.
+
+## Installation
+
+```shell
+npm i event-positions
+```
 
 ## Usage
 
-```typescript
-const getCodeElementFromTarget = (target: HTMLElement): HTMLElement | null => {
-  // ...
-};
+It is currently exposed as an [RxJs Operator](http://reactivex.io/rxjs/manual/overview.html#operators)
 
-const getCodeElementFromLineNumber = (
-  blob: HTMLElement,
-  line: number
-): HTMLElement | null => {
-  // ...
-};
+```javascript
+import { findPositionsFromEvents } from "event-positions";
 
-const getLineNumberFromCodeElement = (codeCell: HTMLElement): number => {
-  // ...
-};
-
-const positionListener = createPositionListener(blobProps.element, {
-  getCodeElementFromTarget,
-  getCodeElementFromLineNumber,
-  getLineNumberFromCodeElement
-});
-
-positionListener.subscribe(({ position }) => console.log(position)); // { line: ..., character: ... }
+observableOfDomElements
+  .pipe(
+    findPositionsFromEvents({
+      ...props
+    })
+  )
+  .subscribe(positionEvent => console.log(positionEvent)); // { line: ..., character: ..., token: ... }
 ```

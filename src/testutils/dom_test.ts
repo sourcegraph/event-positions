@@ -1,4 +1,5 @@
 import { DOM } from "./dom";
+import { createMouseMoveEvent } from "./mouse";
 
 const { expect } = chai;
 
@@ -23,6 +24,27 @@ describe("can create dom elements from generated code tables", () => {
         const line = getLineNumberFromCodeElement(cellFromTarget!);
         expect(line).to.equal(i);
       }
+    }
+  });
+
+  it("blob helpers handle non happy cases", () => {
+    for (const blob of dom.createBlobs()) {
+      const {
+        element,
+        getCodeElementFromTarget,
+        getCodeElementFromLineNumber,
+        getLineNumberFromCodeElement
+      } = blob;
+
+      expect(getCodeElementFromLineNumber(element, 100000)).to.equal(null);
+
+      expect(
+        getCodeElementFromTarget(dom.createElementFromString(""))
+      ).to.equal(null);
+
+      expect(
+        getLineNumberFromCodeElement(dom.createElementFromString(""))
+      ).to.equal(-1);
     }
   });
 });
