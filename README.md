@@ -1,10 +1,26 @@
-# React LSP Annotator
+# Event Positions
 
-Annotator code in the browser.
+This is a small library used to determining the the positions that events happened at
+in code views.
+
+## Installation
+
+```shell
+npm i event-positions
+```
 
 ## Usage
 
-## Caveats
+It is currently exposed as an [RxJs Operator](http://reactivex.io/rxjs/manual/overview.html#operators)
 
-- Only works well with mono-spaced fonts as it is intended for annotating code. For an example, see [Sourcegraph](https://sourcegraph.com/github.com/gorilla/mux@cb4698366aa625048f3b815af6a0dea8aef9280a/-/blob/mux.go#L24:6).
-- The text you are annotating must be `position: relative` for positioning to work.
+```javascript
+import { findPositionsFromEvents } from "event-positions";
+
+observableOfDomElements
+  .pipe(
+    findPositionsFromEvents({
+      ...props
+    })
+  )
+  .subscribe(positionEvent => console.log(positionEvent)); // { line: ..., character: ..., token: ... }
+```
