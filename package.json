@@ -3,25 +3,26 @@
   "version": "0.0.1",
   "description": "Finds the positons of mouse events in dom elements.",
   "license": "MIT",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "index.js",
     "dist"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
-    "prettier": "prettier '**/{*.{js?(on),ts?(x)},.*.js?(on)}' --write --list-different",
-    "build": "npm run clean && tsc -p ./tsconfig.prod.json",
+    "prettier": "prettier '**/{*.{js?(on),ts?(x)},.*.js?(on),*.md}' --write --list-different",
+    "build": "npm run clean && tsc -p ./tsconfig.dist.json",
     "clean": "rimraf dist",
     "lint": "tslint -c tslint.json -p .",
-    "test": "karma start",
-    "pretest": "ts-node testcases/generate.ts"
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' karma start",
+    "pretest": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' ts-node testcases/generate.ts"
   },
   "devDependencies": {
     "@sourcegraph/prettierrc": "^2.1.1",
+    "@sourcegraph/tsconfig": "^3.0.0",
     "@types/chai": "^4.1.4",
     "@types/fs-extra": "^5.0.3",
+    "@types/karma": "^1.7.5",
     "@types/lodash": "^4.14.110",
     "@types/mocha": "^5.2.2",
     "@types/node": "^10.3.5",

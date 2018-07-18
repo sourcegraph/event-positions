@@ -1,5 +1,4 @@
 import { DOM } from './dom'
-import { createMouseMoveEvent } from './mouse'
 
 const { expect } = chai
 

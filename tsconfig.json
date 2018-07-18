@@ -1,13 +1,13 @@
 {
+  "extends": "./node_modules/@sourcegraph/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/",
+    "sourceRoot": "./src",
     "sourceMap": true,
-    "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "strict": true,
-    "module": "commonjs",
-    "target": "es6",
+    "module": "es2015",
+    "target": "es2018",
     "lib": ["es2017", "dom", "dom.iterable", "es2017.object"],
     "moduleResolution": "node",
     "declaration": true

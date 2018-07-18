@@ -14,13 +14,13 @@ npm i event-positions
 It is currently exposed as an [RxJs Operator](http://reactivex.io/rxjs/manual/overview.html#operators)
 
 ```javascript
-import { findPositionsFromEvents } from "event-positions";
+import { findPositionsFromEvents } from 'event-positions'
 
 observableOfDomElements
   .pipe(
     findPositionsFromEvents({
-      ...props
+      ...props,
     })
   )
-  .subscribe(positionEvent => console.log(positionEvent)); // { line: ..., character: ..., token: ... }
+  .subscribe(positionEvent => console.log(positionEvent)) // { line: ..., character: ..., token: ... }
 ```

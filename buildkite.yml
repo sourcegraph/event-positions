@@ -1,0 +1,14 @@
+
+steps:
+  - command: |-
+      npm ci
+      npm run prettier
+      npm run lint
+      npm run build
+    label: ':typescript:'
+
+  - command: |-
+      npm ci
+      npm test -- --single-run --browsers ChromeHeadlessNoSandbox
+      bash <(curl -s https://codecov.io/bash)
+    label: ':karma:'
