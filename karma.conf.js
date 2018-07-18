@@ -1,49 +1,49 @@
-const webpackConfig = require("./webpack.config");
+const webpackConfig = require('./webpack.config')
 
 module.exports = config => {
   config.set({
-    frameworks: ["mocha", "chai", "sinon"],
+    frameworks: ['mocha', 'chai', 'sinon'],
 
     files: [
       {
-        pattern: "src/**/*.ts",
+        pattern: 'src/**/*.ts',
         watched: false,
         included: true,
-        served: true
+        served: true,
       },
       {
-        pattern: "src/**/*.tsx",
+        pattern: 'src/**/*.tsx',
         watched: false,
         included: true,
-        served: true
-      }
+        served: true,
+      },
     ],
     preprocessors: {
-      "src/**/*.ts": ["webpack", "sourcemap"],
-      "src/**/*.tsx": ["webpack", "sourcemap"]
+      'src/**/*.ts': ['webpack', 'sourcemap'],
+      'src/**/*.tsx': ['webpack', 'sourcemap'],
     },
 
     // Ignore the npm package entry point
-    exclude: ["src/index.ts"],
+    exclude: ['src/index.ts'],
 
     // karma-webpack doesn't change the file extensions so we just need to tell karma what these extensions mean.
     mime: {
-      "text/x-typescript": ["ts", "tsx"]
+      'text/x-typescript': ['ts', 'tsx'],
     },
 
     webpack: webpackConfig,
 
     webpackMiddleware: {
-      stats: "errors-only",
-      bail: true
+      stats: 'errors-only',
+      bail: true,
     },
 
-    browsers: ["Chrome", "Firefox"],
+    browsers: ['Chrome', 'Firefox'],
 
-    reporters: ["progress", "coverage-istanbul"],
+    reporters: ['progress', 'coverage-istanbul'],
     coverageIstanbulReporter: {
-      reports: ["json", "html"],
-      fixWebpackSourcePaths: true
-    }
-  });
-};
+      reports: ['json', 'html'],
+      fixWebpackSourcePaths: true,
+    },
+  })
+}

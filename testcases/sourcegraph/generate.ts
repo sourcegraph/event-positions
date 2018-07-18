@@ -1,25 +1,25 @@
-import * as fs from "fs-extra";
-import * as path from "path";
+import * as fs from 'fs-extra'
+import * as path from 'path'
 
 export function generateSourcegraphCodeTable(lines: string[]): string {
-  const code = lines
-    .map(line =>
-      line
-        .split("")
-        .map((c, i) => `<span data-char="${i}">${c}</span>`)
-        .join("")
-    )
-    .map(
-      (line, i) => `<tr>
+    const code = lines
+        .map(line =>
+            line
+                .split('')
+                .map((c, i) => `<span data-char="${i}">${c}</span>`)
+                .join('')
+        )
+        .map(
+            (line, i) => `<tr>
          <td class="line" data-line="${i + 1}"></td>
          <td class="code"><span class="characters-wrapper">${line}</span></td>
       </tr>`
-    )
-    .join("\n");
+        )
+        .join('\n')
 
-  const styles = fs.readFileSync(path.join(__dirname, "styles.css")).toString();
+    const styles = fs.readFileSync(path.join(__dirname, 'styles.css')).toString()
 
-  return `<div class="sourcegraph-testcase">
+    return `<div class="sourcegraph-testcase">
       <style>
         ${styles}
       </style>
@@ -33,5 +33,5 @@ export function generateSourcegraphCodeTable(lines: string[]): string {
               </div>
           </div>
       </div>
-  </div>`;
+  </div>`
 }

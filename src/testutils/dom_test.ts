@@ -1,50 +1,46 @@
-import { DOM } from "./dom";
-import { createMouseMoveEvent } from "./mouse";
+import { DOM } from './dom'
+import { createMouseMoveEvent } from './mouse'
 
-const { expect } = chai;
+const { expect } = chai
 
-describe("can create dom elements from generated code tables", () => {
-  const dom = new DOM();
-  after(dom.cleanup);
+describe('can create dom elements from generated code tables', () => {
+    const dom = new DOM()
+    after(dom.cleanup)
 
-  it("can create the blob test cases and their helper function work", () => {
-    for (const blob of dom.createBlobs()) {
-      const {
-        element,
-        getCodeElementFromTarget,
-        getCodeElementFromLineNumber,
-        getLineNumberFromCodeElement
-      } = blob;
+    it('can create the blob test cases and their helper function work', () => {
+        for (const blob of dom.createBlobs()) {
+            const {
+                element,
+                getCodeElementFromTarget,
+                getCodeElementFromLineNumber,
+                getLineNumberFromCodeElement,
+            } = blob
 
-      for (let i = 0; i < 10; i++) {
-        const cellFromLine = getCodeElementFromLineNumber(element, i);
-        expect(cellFromLine).to.not.equal(null);
-        const cellFromTarget = getCodeElementFromTarget(cellFromLine!);
-        expect(cellFromTarget).to.equal(cellFromLine);
-        const line = getLineNumberFromCodeElement(cellFromTarget!);
-        expect(line).to.equal(i);
-      }
-    }
-  });
+            for (let i = 0; i < 10; i++) {
+                const cellFromLine = getCodeElementFromLineNumber(element, i)
+                expect(cellFromLine).to.not.equal(null)
+                const cellFromTarget = getCodeElementFromTarget(cellFromLine!)
+                expect(cellFromTarget).to.equal(cellFromLine)
+                const line = getLineNumberFromCodeElement(cellFromTarget!)
+                expect(line).to.equal(i)
+            }
+        }
+    })
 
-  it("blob helpers handle non happy cases", () => {
-    for (const blob of dom.createBlobs()) {
-      const {
-        element,
-        getCodeElementFromTarget,
-        getCodeElementFromLineNumber,
-        getLineNumberFromCodeElement
-      } = blob;
+    it('blob helpers handle non happy cases', () => {
+        for (const blob of dom.createBlobs()) {
+            const {
+                element,
+                getCodeElementFromTarget,
+                getCodeElementFromLineNumber,
+                getLineNumberFromCodeElement,
+            } = blob
 
-      expect(getCodeElementFromLineNumber(element, 100000)).to.equal(null);
+            expect(getCodeElementFromLineNumber(element, 100000)).to.equal(null)
 
-      expect(
-        getCodeElementFromTarget(dom.createElementFromString(""))
-      ).to.equal(null);
+            expect(getCodeElementFromTarget(dom.createElementFromString(''))).to.equal(null)
 
-      expect(
-        getLineNumberFromCodeElement(dom.createElementFromString(""))
-      ).to.equal(-1);
-    }
-  });
-});
+            expect(getLineNumberFromCodeElement(dom.createElementFromString(''))).to.equal(-1)
+        }
+    })
+})

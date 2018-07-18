@@ -4,10 +4,5 @@
     "target": "es2018",
     "module": "es2015"
   },
-  "exclude": [
-    "src/**/*_test.ts",
-    "src/**/*_test.tsx",
-    "src/testutils",
-    "testcases"
-  ]
+  "exclude": ["src/**/*_test.ts", "src/**/*_test.tsx", "src/testutils", "testcases"]
 }
