@@ -11,7 +11,7 @@ in code views.
 ## Installation
 
 ```shell
-npm i event-positions
+npm install @sourcegraph/event-positions
 ```
 
 ## Usage
