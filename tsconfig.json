@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceRoot": "./src",
-    "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "module": "es2015",
