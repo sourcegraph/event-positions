@@ -8,8 +8,9 @@
     "esModuleInterop": true,
     "module": "es2015",
     "target": "es2018",
+    "noEmit": true,
     "lib": ["es2017", "dom", "dom.iterable", "es2017.object"],
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": false
   }
 }
