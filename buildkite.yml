@@ -12,3 +12,12 @@ steps:
       npm test -- --single-run --browsers ChromeHeadlessNoSandbox
       bash <(curl -s https://codecov.io/bash)
     label: ':karma:'
+
+  - wait
+
+  - command: |-
+      npm ci
+      npm run build
+      npm run semantic-release
+    branches: master
+    label: ':npm:'
