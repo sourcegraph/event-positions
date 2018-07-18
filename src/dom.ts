@@ -1,5 +1,4 @@
-const getFirstChild = (elem: HTMLElement): Node | null =>
-    elem.firstChild
+const getFirstChild = (elem: HTMLElement): Node | null => elem.firstChild
 
 export const getElementPaddingLeft = (elem: HTMLElement): number => {
     const firstChild = getFirstChild(elem)
