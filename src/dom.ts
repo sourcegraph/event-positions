@@ -1,6 +1,5 @@
-const getFirstChild = (elem: HTMLElement): Node | null => {
-    return elem.firstChild
-}
+const getFirstChild = (elem: HTMLElement): Node | null =>
+    elem.firstChild
 
 export const getElementPaddingLeft = (elem: HTMLElement): number => {
     const firstChild = getFirstChild(elem)
@@ -14,9 +13,8 @@ export const getElementPaddingLeft = (elem: HTMLElement): number => {
     return range.getBoundingClientRect().left - elem.getBoundingClientRect().left
 }
 
-export const getElementOffset = (elem: HTMLElement, useElemOffset = true): number => {
-    return (useElemOffset ? elem.getBoundingClientRect().left : 0) + getElementPaddingLeft(elem)
-}
+export const getElementOffset = (elem: HTMLElement, useElemOffset = true): number =>
+    (useElemOffset ? elem.getBoundingClientRect().left : 0) + getElementPaddingLeft(elem)
 
 export const getTextNodes = (node: Node): Node[] => {
     if (node.childNodes.length === 0 && node.TEXT_NODE === node.nodeType && node.nodeValue) {

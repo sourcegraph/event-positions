@@ -6,16 +6,16 @@ import { findPositionsFromEvents } from './positions_events'
 import { BlobProps, DOM } from './testutils/dom'
 import { createClickEvent, createMouseMoveEvent } from './testutils/mouse'
 
-const getScheduler = () => new TestScheduler(chai.assert.deepEqual)
+const getScheduler = () => new TestScheduler((a, b) => chai.assert.deepEqual(a, b))
 
 describe('findPositionEvents', () => {
     const dom = new DOM()
     after(dom.cleanup)
 
-    let testcases: Array<{
+    let testcases: {
         blobProps: BlobProps
         lines: string[]
-    }> = []
+    }[] = []
 
     before(() => {
         testcases = dom.createBlobs().map(blobProps => {

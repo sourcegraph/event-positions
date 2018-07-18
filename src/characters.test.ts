@@ -40,15 +40,15 @@ describe('Characters', () => {
     const dom = new DOM()
     after(dom.cleanup)
 
-    let testcases: Array<{
+    let testcases: {
         blobProps: BlobProps
         measure: Characters
         measureContainer: HTMLElement
-        chars: Array<{
+        chars: {
             character: string
             width: number
-        }>
-    }> = []
+        }[]
+    }[] = []
 
     before(() => {
         testcases = dom.createBlobs().map((blobProps, i) => {
