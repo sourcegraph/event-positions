@@ -3,6 +3,10 @@
   "version": "0.0.0-DEVELOPMENT",
   "description": "Finds the positons of mouse events in dom elements.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sourcegraph/event-positions"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
