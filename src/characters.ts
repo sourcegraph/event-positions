@@ -1,4 +1,4 @@
-import { Position } from 'vscode-languageserver-types'
+import { Position } from '@sourcegraph/extension-api-types'
 import { getElementOffset, getTextNodes } from './dom'
 
 export interface CharacterRange {

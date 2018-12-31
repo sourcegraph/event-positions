@@ -4,7 +4,7 @@ import { fromEvent, Observable } from 'rxjs'
 
 import { distinctUntilChanged, filter, map } from 'rxjs/operators'
 
-import { Position } from 'vscode-languageserver-types'
+import { Position } from '@sourcegraph/extension-api-types'
 
 import { Characters, Token } from './characters'
 import { propertyIsDefined } from './utils/types'

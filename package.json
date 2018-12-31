@@ -73,8 +73,8 @@
     "webpack-cli": "^3.0.6"
   },
   "dependencies": {
+    "@sourcegraph/extension-api-types": "^1.1.0",
     "lodash": "^4.17.10",
-    "rxjs": "^6.3.2",
-    "vscode-languageserver-types": "^3.8.2"
+    "rxjs": "^6.3.2"
   }
 }
