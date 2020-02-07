@@ -2,7 +2,6 @@
   "extends": "./node_modules/@sourcegraph/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/",
-    "sourceRoot": "./src",
     "inlineSourceMap": true,
     "inlineSources": true,
     "allowSyntheticDefaultImports": true,
